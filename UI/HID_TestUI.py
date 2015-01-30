@@ -109,14 +109,14 @@ class HIDTestUI(object):
                                              activebackground="#00B2EE",
                                              activeforeground="#E0EEEE",
                                              bg="#008B8B", fg="#FFFFFF",
-                                             bd=2, width=10,
+                                             width=10,
                                              font=font,
                                              command=self.Reset)
         self.frm_right_send_btn = tk.Button(self.frm_right_reset, text="Send",
                                             activebackground="#00B2EE",
                                             activeforeground="#E0EEEE",
                                             bg="#008B8B", fg="#FFFFFF",
-                                            bd=2, width=10,
+                                            width=10,
                                             font=font,
                                             command=self.Send)
 
@@ -160,7 +160,7 @@ class HIDTestUI(object):
                                              activebackground="#00B2EE",
                                              activeforeground="#E0EEEE",
                                              bg="#008B8B", fg="#FFFFFF",
-                                             bd=2, width=10,
+                                             width=10,
                                              font=font,
                                              command=self.Clear)
 
