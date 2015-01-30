@@ -11,14 +11,15 @@ import usb.core
 from UI import HID_TestUI
 from COM import usbHelper
 
+
 class MainUSBToolUI(HID_TestUI.HIDTestUI):
     def __init__(self, master=None):
         super(MainUSBToolUI, self).__init__()
         self.list_box_pyusb = list()
+        self.receive_count = 0
         self.usbDev = None
         self.vid = 0x1391
         self.pid = 0x2111
-        self.receive_data = list()
         self.find_all_devices()
 
     def __del__(self):
@@ -95,6 +96,9 @@ class MainUSBToolUI(HID_TestUI.HIDTestUI):
             self.frm_status_label["text"] = "Close USB Device Successful!"
             self.frm_status_label["fg"] = "#8DEEEE"
 
+    def Open(self, event):
+        self.Toggle()
+
     def Send(self):
         send_list = self.GetSendList()
         if self.usbDev:
@@ -103,6 +107,10 @@ class MainUSBToolUI(HID_TestUI.HIDTestUI):
                     self.usbDev.write(send_list)
             except Exception as e:
                 self.frm_right_receive.insert("end", str(e) + "\n")
+
+    def Clear(self):
+        self.frm_right_receive.delete("0.0", "end")
+        self.receive_count = 0
 
     def GetSendList(self):
         send_list = list()
@@ -143,16 +151,16 @@ class MainUSBToolUI(HID_TestUI.HIDTestUI):
         while self.usbDev.alive:
             try:
                 temp_list = self.usbDev.read()
-                # self.receive_data.append(temp_list)
+                self.receive_count += 1
 
                 if self.checkValue.get() == 0:
                     temp_string = self.ListStringFormat(temp_list)
                 else:
                     temp_string = self.ListStringFormat(temp_list, lineNum=16, strFormat="int")
-                self.frm_right_receive.insert("end", "[" + str(datetime.datetime.now()) + "]:\n", "green")
+                self.frm_right_receive.insert("end", "[" + str(datetime.datetime.now()) + 
+                                              " - " + str(self.receive_count) + "]:\n", "green")
                 self.frm_right_receive.insert("end", temp_string)
                 self.frm_right_receive.see("end")
-                # self.receive_data[0:]
             except Exception as e:
                 pass
 

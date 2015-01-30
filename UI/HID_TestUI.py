@@ -66,6 +66,8 @@ class HIDTestUI(object):
         self.frm_left_listbox.grid(row=1, column=0, padx=5, pady=5, sticky="wesn")
         self.frm_left_btn.grid(row=2, column=0, padx=5, pady=5, sticky="wesn")
 
+        self.frm_left_listbox.bind("<Double-Button-1>", self.Open)
+
     def create_frm_right(self):
         '''
         上半部分右边窗口：
@@ -178,6 +180,9 @@ class HIDTestUI(object):
         self.frm_status_label.grid(row=0, column=0, padx=5, pady=5, sticky="wesn")
 
     def Toggle(self):
+        pass
+
+    def Open(self, event):
         pass
 
     def Reset(self):
