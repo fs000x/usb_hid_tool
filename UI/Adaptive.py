@@ -18,8 +18,18 @@ if g_systemName == "Linux" and g_pyVersion[:3] == "2.7":
                     }
 
     # raspberry pi
-    elif "armv61" in g_systemInfo:
-        size_dict = {}
+    elif "armv6l" in g_systemInfo:
+        size_dict = {
+                        "list_box_height": 21,
+                        "reset_label_width": 24,
+                        "clear_label_width": 22
+                    }
+else:
+    size_dict = {
+                    "list_box_height": 22,
+                    "reset_label_width": 24,
+                    "clear_label_width": 20
+                }
 
 # font
 monaco_font = ('Monaco', 12)
