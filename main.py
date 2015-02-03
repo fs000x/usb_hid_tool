@@ -7,6 +7,7 @@ import threading
 import datetime
 import platform
 
+# 根据系统 引用不同的usb库
 if platform.system() == "Windows":
     import pywinusb.hid as hid
     from COM import hidHelper
@@ -15,7 +16,6 @@ else:
     from COM import usbHelper
 
 from UI import HID_TestUI
-
 
 
 class MainUSBToolUI(HID_TestUI.HIDTestUI):
@@ -37,6 +37,9 @@ class MainUSBToolUI(HID_TestUI.HIDTestUI):
                 pass
 
     def find_all_devices(self):
+        '''
+        线程检测USB的连接状态
+        '''
         try:
             self.temp_pyusb = list()
             if platform.system() == "Windows":
@@ -60,10 +63,15 @@ class MainUSBToolUI(HID_TestUI.HIDTestUI):
                 if item not in self.temp_pyusb:
                     index = list(self.frm_left_listbox.get(0, self.frm_left_listbox.size())).index(item)
                     self.frm_left_listbox.delete(index)
+            # 检测到usb设备被拔出时，初始化界面
             if self.pid and self.vid:
-                dev_info = "VID:{0} PID:{1}".format(self.vid, self.pid)
+                _vid = self.fill_zero(hex(self.vid)[2:])
+                _pid = self.fill_zero(hex(self.pid)[2:])
+                dev_info = "VID:{0} PID:{1}".format(_vid, _pid)
                 if dev_info not in self.temp_pyusb:
                     self.Toggle()
+                    self.vid = None
+                    self.pid = None
             self.list_box_pyusb = self.temp_pyusb
 
             self.thread_find_all_devices = threading.Thread(target=self.find_all_devices)
@@ -73,6 +81,9 @@ class MainUSBToolUI(HID_TestUI.HIDTestUI):
             pass
 
     def fill_zero(self, strHex, strLen=4):
+        '''
+        为了美观，将不足位用0填充
+        '''
         if len(strHex) > strLen:
             strHex = strHex[0:strLen]
         elif len(strHex) < strLen:
@@ -80,6 +91,9 @@ class MainUSBToolUI(HID_TestUI.HIDTestUI):
         return strHex.upper()
 
     def Toggle(self):
+        '''
+        打开/关闭 usb设备
+        '''
         if self.frm_left_btn["text"] == "Open":
             try:
                 try:
@@ -121,9 +135,15 @@ class MainUSBToolUI(HID_TestUI.HIDTestUI):
             self.frm_status_label["fg"] = "#8DEEEE"
 
     def Open(self, event):
+        '''
+        双击Listbox事件
+        '''
         self.Toggle()
 
     def Send(self):
+        '''
+        发送数据
+        '''
         send_list = self.GetSendList()
         if self.usbDev:
             try:
@@ -139,6 +159,9 @@ class MainUSBToolUI(HID_TestUI.HIDTestUI):
         self.receive_count = 0
 
     def GetSendList(self):
+        '''
+        获取64个entry的数据组成发送的列表
+        '''
         send_list = list()
         temp_list = list()
         for entry in self.entry_list:
@@ -155,6 +178,9 @@ class MainUSBToolUI(HID_TestUI.HIDTestUI):
             return [0 for i in range(64)]
 
     def ListStringFormat(self, receive_list, lineNum=16, strFormat="str"):
+        '''
+        格式化接收数据，按照自己想要的格式输出
+        '''
         temp_string = ""
         if strFormat == "str": 
             for index,item in enumerate(receive_list):
@@ -172,6 +198,9 @@ class MainUSBToolUI(HID_TestUI.HIDTestUI):
             return temp_string
 
     def HidUsbRead(self, data):
+        '''
+        回调事件，接收数据
+        '''
         try:
             temp_list = data[1:]
             self.receive_count += 1
@@ -188,6 +217,9 @@ class MainUSBToolUI(HID_TestUI.HIDTestUI):
             pass
 
     def UsbRead(self):
+        '''
+        线程检测是否有数据可读
+        '''
         while self.usbDev.alive:
             try:
                 temp_list = self.usbDev.read()
