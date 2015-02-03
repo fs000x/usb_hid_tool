@@ -86,7 +86,7 @@ class HIDTestUI(object):
         self.frm_right_receive = tk.Text(self.frm_right,
                                          width=50, height=20,
                                          bg="#292929", fg="#1E90FF",
-                                         font=("Monaco", 10))
+                                         font=("Monaco", 9))
 
         self.frm_right_reset.grid(row=0, column=0, padx=1, sticky="wesn")
         self.frm_right_send.grid(row=1, column=0, padx=1, sticky="wesn")

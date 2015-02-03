@@ -5,11 +5,17 @@ import time
 import Tkinter as tk
 import threading
 import datetime
+import platform
 
-import usb.core
+if platform.system() == "Windows":
+    import pywinusb.hid as hid
+    from COM import hidHelper
+else:
+    import usb.core
+    from COM import usbHelper
 
 from UI import HID_TestUI
-from COM import usbHelper
+
 
 
 class MainUSBToolUI(HID_TestUI.HIDTestUI):
@@ -18,8 +24,8 @@ class MainUSBToolUI(HID_TestUI.HIDTestUI):
         self.list_box_pyusb = list()
         self.receive_count = 0
         self.usbDev = None
-        self.vid = 0x1391
-        self.pid = 0x2111
+        self.vid = None
+        self.pid = None
         self.find_all_devices()
 
     def __del__(self):
@@ -33,12 +39,20 @@ class MainUSBToolUI(HID_TestUI.HIDTestUI):
     def find_all_devices(self):
         try:
             self.temp_pyusb = list()
-            usb_dev = usb.core.find(find_all=True)
-            for dev in usb_dev:
-                vid = self.fill_zero(hex(dev.idVendor)[2:])
-                pid = self.fill_zero(hex(dev.idProduct)[2:])
-                dev_info = "VID:{0} PID:{1}".format(vid, pid)
-                self.temp_pyusb.append(dev_info)
+            if platform.system() == "Windows":
+                usb_dev = hid.find_all_hid_devices()
+                for dev in usb_dev:
+                    vid = self.fill_zero(hex(dev.vendor_id)[2:])
+                    pid = self.fill_zero(hex(dev.product_id)[2:])
+                    dev_info = "VID:{0} PID:{1}".format(vid, pid)
+                    self.temp_pyusb.append(dev_info)
+            else:
+                usb_dev = usb.core.find(find_all=True)
+                for dev in usb_dev:
+                    vid = self.fill_zero(hex(dev.idVendor)[2:])
+                    pid = self.fill_zero(hex(dev.idProduct)[2:])
+                    dev_info = "VID:{0} PID:{1}".format(vid, pid)
+                    self.temp_pyusb.append(dev_info)
             for item in self.temp_pyusb:
                 if item not in self.list_box_pyusb:
                     self.frm_left_listbox.insert("end", item)
@@ -46,6 +60,10 @@ class MainUSBToolUI(HID_TestUI.HIDTestUI):
                 if item not in self.temp_pyusb:
                     index = list(self.frm_left_listbox.get(0, self.frm_left_listbox.size())).index(item)
                     self.frm_left_listbox.delete(index)
+            if self.pid and self.vid:
+                dev_info = "VID:{0} PID:{1}".format(self.vid, self.pid)
+                if dev_info not in self.temp_pyusb:
+                    self.Toggle()
             self.list_box_pyusb = self.temp_pyusb
 
             self.thread_find_all_devices = threading.Thread(target=self.find_all_devices)
@@ -73,17 +91,23 @@ class MainUSBToolUI(HID_TestUI.HIDTestUI):
                 self.vid = int(self.currentStrUsb[4:8], 16)
                 self.pid = int(self.currentStrUsb[13:17], 16)
 
-                self.usbDev = usbHelper.UsbHelper(self.vid, self.pid)
-                self.usbDev.start()
+                if platform.system() == "Windows":
+                    self.usbDev = hidHelper.hidHelper(self.vid, self.pid)
+                    self.usbDev.start()
+                    if self.usbDev.device:
+                        self.usbDev.device.set_raw_data_handler(self.HidUsbRead)
+                else:
+                    self.usbDev = usbHelper.UsbHelper(self.vid, self.pid)
+                    self.usbDev.start()
+                    if self.usbDev.alive:
+                        self.thread_read = threading.Thread(target=self.UsbRead)
+                        self.thread_read.setDaemon(True)
+                        self.thread_read.start()
                 if self.usbDev.alive:
                     self.frm_status_label["text"] = "Open Device [{0}] Successful!".format(self.currentStrUsb)
                     self.frm_status_label["fg"] = "#66CD00"
                     self.frm_left_btn["text"] = "Close"
                     self.frm_left_btn["bg"] = "#F08080"
-
-                    self.thread_read = threading.Thread(target=self.UsbRead)
-                    self.thread_read.setDaemon(True)
-                    self.thread_read.start()
             except Exception as e:
                 print e
         elif self.frm_left_btn["text"] == "Close":
@@ -104,6 +128,8 @@ class MainUSBToolUI(HID_TestUI.HIDTestUI):
         if self.usbDev:
             try:
                 if self.usbDev.alive:
+                    if platform.system() == "Windows":
+                        send_list.insert(0, 0x00)
                     self.usbDev.write(send_list)
             except Exception as e:
                 self.frm_right_receive.insert("end", str(e) + "\n")
@@ -132,20 +158,34 @@ class MainUSBToolUI(HID_TestUI.HIDTestUI):
         temp_string = ""
         if strFormat == "str": 
             for index,item in enumerate(receive_list):
+                item = self.fill_zero(hex(item)[2:], strLen=2)
+                temp_string += "%-5s"%item
                 if (index+1)%16 == 0:
                     temp_string += "\n"
-                else:
-                    item = self.fill_zero(hex(item)[2:], strLen=2)
-                    temp_string += "%-5s"%item
             return temp_string
         else:
             for index,item in enumerate(receive_list):
+                item = self.fill_zero(str(item), strLen=3)
+                temp_string += "%-5s"%item
                 if (index+1)%16 == 0:
                     temp_string += "\n"
-                else:
-                    item = self.fill_zero(str(item), strLen=3)
-                    temp_string += "%-5s"%item
             return temp_string
+
+    def HidUsbRead(self, data):
+        try:
+            temp_list = data[1:]
+            self.receive_count += 1
+
+            if self.checkValue.get() == 0:
+                temp_string = self.ListStringFormat(temp_list)
+            else:
+                temp_string = self.ListStringFormat(temp_list, lineNum=16, strFormat="int")
+            self.frm_right_receive.insert("end", "[" + str(datetime.datetime.now()) + 
+                                          " - " + str(self.receive_count) + "]:\n", "green")
+            self.frm_right_receive.insert("end", temp_string)
+            self.frm_right_receive.see("end")
+        except Exception as e:
+            pass
 
     def UsbRead(self):
         while self.usbDev.alive:

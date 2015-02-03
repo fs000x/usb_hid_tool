@@ -26,7 +26,7 @@ if g_systemName == "Linux" and g_pyVersion[:3] == "2.7":
                     }
 else:
     size_dict = {
-                    "list_box_height": 22,
+                    "list_box_height": 21,
                     "reset_label_width": 24,
                     "clear_label_width": 20
                 }
