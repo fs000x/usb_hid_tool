@@ -13,7 +13,6 @@ class UsbHelper(object):
         self.pid = pid
 
     def SetStopEvent(self):
-
         self.alive = False
         self.stop()
 

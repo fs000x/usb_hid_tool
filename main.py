@@ -63,7 +63,7 @@ class MainUSBToolUI(HID_TestUI.HIDTestUI):
                 if item not in self.temp_pyusb:
                     index = list(self.frm_left_listbox.get(0, self.frm_left_listbox.size())).index(item)
                     self.frm_left_listbox.delete(index)
-            # 检测到usb设备被拔出时，初始化界面
+            # 检测到usb设备被拔出时，关闭usb设备
             if self.pid and self.vid:
                 _vid = self.fill_zero(hex(self.vid)[2:])
                 _pid = self.fill_zero(hex(self.pid)[2:])
