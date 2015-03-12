@@ -74,7 +74,7 @@ class MainUSBToolUI(HID_TestUI.HIDTestUI):
                     self.pid = None
             self.list_box_pyusb = self.temp_pyusb
 
-            self.thread_find_all_devices = threading.Thread(target=self.find_all_devices)
+            self.thread_find_all_devices = threading.Timer(1, self.find_all_devices)
             self.thread_find_all_devices.setDaemon(True)
             self.thread_find_all_devices.start()
         except:
