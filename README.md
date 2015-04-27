@@ -7,22 +7,22 @@ USB调试工具
 ================================================================
 需要安装的模块：
 在Windows下:
-    默认是有安装Tkinter的，因此只需要安装pywinusb
-    可以通过pip来安装：
-        pip install pywinusb
+----默认是有安装Tkinter的，因此只需要安装pywinusb
+----可以通过pip来安装：
+--------pip install pywinusb
     或者到 https://pypi.python.org/pypi/pywinusb 下载最新版安装
-        python setup.py install
+--------python setup.py install
 在Ubuntu下：
-    默认是没有安装Tkinter的
-    需要先进行必要模块的安装
+----默认是没有安装Tkinter的
+----需要先进行必要模块的安装
 
-    使用apt-get安装tk
-    sudo apt-get install python-tk
+----使用apt-get安装tk
+--------sudo apt-get install python-tk
 
-    pyusb可以通过pip来安装：
-        pip install pyusb
-    或者到 https://pypi.python.org/pypi/pyusb 下载最新版安装
-        python setup.py install
+----pyusb可以通过pip来安装：
+--------pip install pyusb
+----或者到 https://pypi.python.org/pypi/pyusb 下载最新版安装
+--------python setup.py install
 
 
 执行python main.py即可开始使用(ubuntu下需要使用root权限 sudo python main.py)
