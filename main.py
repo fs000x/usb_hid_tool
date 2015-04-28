@@ -1,11 +1,22 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
 
+'''
+界面逻辑
+'''
+__author__ = "jakey.chen"
+__version__ = "v1.0"
+
 import time
 import Tkinter as tk
 import threading
 import datetime
 import platform
+import logging
+
+logging.basicConfig(level=logging.DEBUG,
+                    format='%(asctime)s %(filename)s[line:%(lineno)d] %(levelname)s %(message)s',
+                    datefmt='%a, %d %b %Y %H:%M:%S')
 
 # 根据系统 引用不同的usb库
 if platform.system() == "Windows":
@@ -34,7 +45,7 @@ class MainUSBToolUI(HID_TestUI.HIDTestUI):
             try:
                 self.usbDev.stop()
             except:
-                pass
+                logging.error(e)
 
     def find_all_devices(self):
         '''
@@ -78,7 +89,7 @@ class MainUSBToolUI(HID_TestUI.HIDTestUI):
             self.thread_find_all_devices.setDaemon(True)
             self.thread_find_all_devices.start()
         except:
-            pass
+            logging.error(e)
 
     def fill_zero(self, strHex, strLen=4):
         '''
@@ -123,12 +134,12 @@ class MainUSBToolUI(HID_TestUI.HIDTestUI):
                     self.frm_left_btn["text"] = "Close"
                     self.frm_left_btn["bg"] = "#F08080"
             except Exception as e:
-                print e
+                logging.error(e)
         elif self.frm_left_btn["text"] == "Close":
             try:
                 self.usbDev.stop()
             except:
-                pass
+                logging.error(e)
             self.frm_left_btn["text"] = "Open"
             self.frm_left_btn["bg"] = "#008B8B"
             self.frm_status_label["text"] = "Close USB Device Successful!"
@@ -155,6 +166,9 @@ class MainUSBToolUI(HID_TestUI.HIDTestUI):
                 self.frm_right_receive.insert("end", str(e) + "\n")
 
     def Clear(self):
+        '''
+        清除接收记录
+        '''
         self.frm_right_receive.delete("0.0", "end")
         self.receive_count = 0
 
@@ -214,7 +228,7 @@ class MainUSBToolUI(HID_TestUI.HIDTestUI):
             self.frm_right_receive.insert("end", temp_string)
             self.frm_right_receive.see("end")
         except Exception as e:
-            pass
+            logging.error(e)
 
     def UsbRead(self):
         '''
@@ -234,7 +248,9 @@ class MainUSBToolUI(HID_TestUI.HIDTestUI):
                 self.frm_right_receive.insert("end", temp_string)
                 self.frm_right_receive.see("end")
             except Exception as e:
-                pass
+                self.usbDev.stop()
+                self.usbDev = None
+                logging.error(e)
 
 
 if __name__ == '__main__':

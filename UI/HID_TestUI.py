@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 '''
-与MES通讯的界面
+USB设备主界面
 '''
 __author__ = "jakey.chen"
 __version__ = "v1.0"

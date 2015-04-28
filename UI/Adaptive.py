@@ -1,6 +1,13 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
 
+'''
+适配各个系统，防止错位
+'''
+__author__ = "jakey.chen"
+__version__ = "v1.0"
+
+
 import platform
 
 g_systemName = platform.system()
