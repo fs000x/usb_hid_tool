@@ -122,7 +122,7 @@ class MainUSBToolUI(HID_TestUI.HIDTestUI):
                     if self.usbDev.device:
                         self.usbDev.device.set_raw_data_handler(self.HidUsbRead)
                 else:
-                    self.usbDev = usbHelper.UsbHelper(self.vid, self.pid)
+                    self.usbDev = usbHelper.usbHelper(self.vid, self.pid)
                     self.usbDev.start()
                     if self.usbDev.alive:
                         self.thread_read = threading.Thread(target=self.UsbRead)
