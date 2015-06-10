@@ -14,6 +14,7 @@ import usb.core
 
 
 class usbHelper(object):
+
     def __init__(self, vid=0x1391, pid=0x2111):
         self.alive = False
         self.handle = None
@@ -27,9 +28,9 @@ class usbHelper(object):
         '''
         self.dev = usb.core.find(idVendor=self.vid, idProduct=self.pid)
         if self.dev != None:
-            self.ep_in = self.dev[0][(0,0)][0].bEndpointAddress
-            self.ep_out = self.dev[0][(0,0)][1].bEndpointAddress
-            self.size = self.dev[0][(0,0)][1].wMaxPacketSize
+            self.ep_in = self.dev[0][(0, 0)][0].bEndpointAddress
+            self.ep_out = self.dev[0][(0, 0)][1].bEndpointAddress
+            self.size = self.dev[0][(0, 0)][1].wMaxPacketSize
         self.open()
         self.alive = True
 
@@ -83,7 +84,8 @@ class usbHelper(object):
         发送数据给usb设备
         '''
         if self.handle:
-            bytes_num = self.handle.interruptWrite(self.ep_out, send_list, timeout)
+            bytes_num = self.handle.interruptWrite(
+                self.ep_out, send_list, timeout)
             return bytes_num
 
 if __name__ == '__main__':
@@ -95,11 +97,11 @@ if __name__ == '__main__':
     send_list = [0xAA for i in range(64)]
     dev.write(send_list)
     # time.sleep(0.25)
-    while True: 
+    while True:
         try:
             mylist = dev.read()
             print mylist
-            if mylist[1] == 0x02: 
+            if mylist[1] == 0x02:
                 break
         except:
             dev.stop()

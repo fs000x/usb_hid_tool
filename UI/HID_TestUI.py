@@ -19,6 +19,7 @@ g_default_theme = pytk.g_default_theme
 
 
 class HIDTestUI(object):
+
     def __init__(self, master=None):
         self.root = master
         self.create_frame()
@@ -55,19 +56,21 @@ class HIDTestUI(object):
         Listbox显示连接的USB设备
         Button按钮点击连接设备
         '''
-        self.frm_left_label = pytk.PyLabel(self.frm_left, 
+        self.frm_left_label = pytk.PyLabel(self.frm_left,
                                            text="HID Devices",
                                            font=g_font)
         self.frm_left_listbox = pytk.PyListbox(self.frm_left,
-                                               height=g_size_dict["list_box_height"],
+                                               height=g_size_dict[
+                                                   "list_box_height"],
                                                font=g_font)
-        self.frm_left_btn = pytk.PyButton(self.frm_left, 
+        self.frm_left_btn = pytk.PyButton(self.frm_left,
                                           text="Open",
                                           font=g_font,
                                           command=self.Toggle)
 
         self.frm_left_label.grid(row=0, column=0, padx=5, pady=5, sticky="w")
-        self.frm_left_listbox.grid(row=1, column=0, padx=5, pady=5, sticky="wesn")
+        self.frm_left_listbox.grid(
+            row=1, column=0, padx=5, pady=5, sticky="wesn")
         self.frm_left_btn.grid(row=2, column=0, padx=5, pady=5, sticky="wesn")
 
         self.frm_left_listbox.bind("<Double-Button-1>", self.Open)
@@ -85,7 +88,7 @@ class HIDTestUI(object):
         self.frm_right_send = pytk.PyLabelFrame(self.frm_right)
         self.frm_right_clear = pytk.PyLabelFrame(self.frm_right)
         self.frm_right_receive = pytk.PyText(self.frm_right,
-                                             width=50, 
+                                             width=50,
                                              height=20,
                                              font=("Monaco", 9))
 
@@ -105,22 +108,26 @@ class HIDTestUI(object):
         1、Label显示和重置按钮和发送按钮
         '''
         self.frm_right_reset_label = pytk.PyLabel(self.frm_right_reset,
-                                                  text="Hex Bytes" + " "*g_size_dict["reset_label_width"],
+                                                  text="Hex Bytes" + " " *
+                                                  g_size_dict[
+                                                      "reset_label_width"],
                                                   font=g_font)
-        self.frm_right_reset_btn = pytk.PyButton(self.frm_right_reset, 
+        self.frm_right_reset_btn = pytk.PyButton(self.frm_right_reset,
                                                  text="Reset",
                                                  width=10,
                                                  font=g_font,
                                                  command=self.Reset)
-        self.frm_right_send_btn = pytk.PyButton(self.frm_right_reset, 
+        self.frm_right_send_btn = pytk.PyButton(self.frm_right_reset,
                                                 text="Send",
                                                 width=10,
                                                 font=g_font,
                                                 command=self.Send)
 
         self.frm_right_reset_label.grid(row=0, column=0, sticky="w")
-        self.frm_right_reset_btn.grid(row=0, column=1, padx=5, pady=5, sticky="wesn")
-        self.frm_right_send_btn.grid(row=0, column=2, padx=5, pady=5, sticky="wesn")
+        self.frm_right_reset_btn.grid(
+            row=0, column=1, padx=5, pady=5, sticky="wesn")
+        self.frm_right_send_btn.grid(
+            row=0, column=2, padx=5, pady=5, sticky="wesn")
 
     def create_frm_right_send(self):
         '''
@@ -130,12 +137,13 @@ class HIDTestUI(object):
         for i in range(64):
             temp_str = tk.StringVar()
             temp_entry = pytk.PyEntry(self.frm_right_send,
-                                      textvariable=temp_str, 
+                                      textvariable=temp_str,
                                       width=3,
                                       fg="#1E90FF",
                                       font=g_font)
             temp_str.set("00")
-            temp_entry.grid(row=i//16, column=i%16, padx=1, pady=1, sticky="wesn")
+            temp_entry.grid(row=i//16, column=i %
+                            16, padx=1, pady=1, sticky="wesn")
             self.entry_list.append(temp_str)
 
     def create_frm_right_clear(self):
@@ -144,31 +152,37 @@ class HIDTestUI(object):
         '''
         self.checkValue = tk.IntVar()
         self.frm_right_clear_label = pytk.PyLabel(self.frm_right_clear,
-                                                  text="Data Received"+ " "*g_size_dict["clear_label_width"],
+                                                  text="Data Received" + " " *
+                                                  g_size_dict[
+                                                      "clear_label_width"],
                                                   font=g_font)
         self.frm_right_decimal_checkbtn = pytk.PyCheckbutton(self.frm_right_clear,
                                                              text="Decimal",
                                                              variable=self.checkValue,
                                                              relief="flat",
                                                              font=g_font)
-        self.frm_right_clear_btn = pytk.PyButton(self.frm_right_clear, 
+        self.frm_right_clear_btn = pytk.PyButton(self.frm_right_clear,
                                                  text="Clear",
                                                  width=10,
                                                  font=g_font,
                                                  command=self.Clear)
 
-        self.frm_right_clear_label.grid(row=0, column=0, padx=5, pady=5, sticky="w")
-        self.frm_right_decimal_checkbtn.grid(row=0, column=1, padx=5, pady=5, sticky="wesn")
-        self.frm_right_clear_btn.grid(row=0, column=2, padx=5, pady=5, sticky="wesn")
+        self.frm_right_clear_label.grid(
+            row=0, column=0, padx=5, pady=5, sticky="w")
+        self.frm_right_decimal_checkbtn.grid(
+            row=0, column=1, padx=5, pady=5, sticky="wesn")
+        self.frm_right_clear_btn.grid(
+            row=0, column=2, padx=5, pady=5, sticky="wesn")
 
     def create_frm_status(self):
         '''
         下半部分状态栏窗口
         '''
-        self.frm_status_label = pytk.PyLabel(self.frm_status, 
+        self.frm_status_label = pytk.PyLabel(self.frm_status,
                                              text="Ready",
                                              font=g_font)
-        self.frm_status_label.grid(row=0, column=0, padx=5, pady=5, sticky="wesn")
+        self.frm_status_label.grid(
+            row=0, column=0, padx=5, pady=5, sticky="wesn")
 
     def Toggle(self):
         pass

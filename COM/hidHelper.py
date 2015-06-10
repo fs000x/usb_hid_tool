@@ -12,6 +12,7 @@ import pywinusb.hid as hid
 
 
 class hidHelper(object):
+
     def __init__(self, vid=0x1391, pid=0x2111):
         self.alive = False
         self.device = None
@@ -23,7 +24,7 @@ class hidHelper(object):
         '''
         开始，打开HID设备
         '''
-        _filter = hid.HidDeviceFilter(vendor_id = self.vid, product_id = self.pid)
+        _filter = hid.HidDeviceFilter(vendor_id=self.vid, product_id=self.pid)
         hid_device = _filter.get_devices()
         if len(hid_device) > 0:
             self.device = hid_device[0]

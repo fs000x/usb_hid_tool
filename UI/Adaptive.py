@@ -19,24 +19,24 @@ size_dict = dict()
 if g_systemName == "Linux" and g_pyVersion[:3] == "2.7":
     if "Ubuntu" in g_systemInfo:
         size_dict = {
-                        "list_box_height": 20,
-                        "reset_label_width": 24,
-                        "clear_label_width": 22
-                    }
+            "list_box_height": 20,
+            "reset_label_width": 24,
+            "clear_label_width": 22
+        }
 
     # raspberry pi
     elif "armv6l" in g_systemInfo:
         size_dict = {
-                        "list_box_height": 19,
-                        "reset_label_width": 24,
-                        "clear_label_width": 22
-                    }
+            "list_box_height": 19,
+            "reset_label_width": 24,
+            "clear_label_width": 22
+        }
 else:
     size_dict = {
-                    "list_box_height": 21,
-                    "reset_label_width": 24,
-                    "clear_label_width": 20
-                }
+        "list_box_height": 21,
+        "reset_label_width": 24,
+        "clear_label_width": 20
+    }
 
 # font
 monaco_font = ('Monaco', 12)
