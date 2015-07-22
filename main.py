@@ -41,7 +41,7 @@ class MainUSBToolUI(HID_TestUI.HIDTestUI):
         self.find_all_devices()
 
     def __del__(self):
-        time.sleep(1)
+        logging.error("__del__")
         if self.usbDev:
             try:
                 self.usbDev.stop()
