@@ -25,7 +25,7 @@ if g_systemName == "Linux" and g_pyVersion[:3] == "2.7":
         }
 
     # raspberry pi
-    elif "armv6l" in g_systemInfo:
+    else:
         size_dict = {
             "list_box_height": 19,
             "reset_label_width": 24,
