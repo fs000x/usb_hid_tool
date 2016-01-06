@@ -22,6 +22,7 @@ logging.basicConfig(level=logging.DEBUG,
 if platform.system() == "Windows":
     import pywinusb.hid as hid
     from COM import hidHelper
+    from COM.pyusbHelper import pyusbHelper
 else:
     import usb.core
     from COM import usbHelper
@@ -40,14 +41,6 @@ class MainUSBToolUI(HID_TestUI.HIDTestUI):
         self.pid = None
         self.find_all_devices()
 
-    def __del__(self):
-        logging.error("__del__")
-        if self.usbDev:
-            try:
-                self.usbDev.stop()
-            except:
-                logging.error(e)
-
     def find_all_devices(self):
         '''
         线程检测USB的连接状态
@@ -57,7 +50,7 @@ class MainUSBToolUI(HID_TestUI.HIDTestUI):
             if platform.system() == "Windows":
                 usb_dev = hid.find_all_hid_devices()
                 for dev in usb_dev:
-                    vid = self.fill_zero(hex(dev.vendor_id)[2:])
+                    vid = hex(dev.vendor_id)[2:].rjust(4, "0")
                     pid = self.fill_zero(hex(dev.product_id)[2:])
                     dev_info = "VID:{0} PID:{1}".format(vid, pid)
                     self.temp_pyusb.append(dev_info)
@@ -91,7 +84,7 @@ class MainUSBToolUI(HID_TestUI.HIDTestUI):
                 1, self.find_all_devices)
             self.thread_find_all_devices.setDaemon(True)
             self.thread_find_all_devices.start()
-        except:
+        except Exception as e:
             logging.error(e)
 
     def fill_zero(self, strHex, strLen=4):
@@ -114,8 +107,7 @@ class MainUSBToolUI(HID_TestUI.HIDTestUI):
                     self.currentStrUsb = self.frm_left_listbox.get(
                         self.frm_left_listbox.curselection())
                 except:
-                    self.frm_status_label[
-                        "text"] = "Please select device first!"
+                    self.frm_status_label["text"] = "Please select device first!"
                     return
 
                 self.vid = int(self.currentStrUsb[4:8], 16)
@@ -145,8 +137,9 @@ class MainUSBToolUI(HID_TestUI.HIDTestUI):
                 logging.error(e)
         elif self.frm_left_btn["text"] == "Close":
             try:
-                self.usbDev.stop()
-            except:
+                if hasattr(self.usbDev, "stop"):
+                    self.usbDev.stop()
+            except Exception as e:
                 logging.error(e)
             self.frm_left_btn["text"] = "Open"
             self.frm_left_btn["bg"] = "#008B8B"
@@ -258,7 +251,8 @@ class MainUSBToolUI(HID_TestUI.HIDTestUI):
                 self.frm_right_receive.insert("end", temp_string)
                 self.frm_right_receive.see("end")
             except Exception as e:
-                self.usbDev.stop()
+                if hasattr(self.usbDev, "stop"):
+                    self.usbDev.stop()
                 self.usbDev = None
                 logging.error(e)
 
@@ -268,7 +262,9 @@ if __name__ == '__main__':
     main loop
     '''
     root = tk.Tk()
-    root.title("HID-Test")
-    MainUSBToolUI(master=root)
-    root.resizable(False, False)
+    root.columnconfigure(0, weight=1)
+    root.rowconfigure(0, weight=1)
+    root.title(r"HID-Test")
+
+    MainUSBToolUI(root)
     root.mainloop()
