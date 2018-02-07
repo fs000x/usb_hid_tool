@@ -50,7 +50,7 @@ class MainUSBToolUI(HID_TestUI.HIDTestUI):
             if platform.system() == "Windows":
                 usb_dev = hid.find_all_hid_devices()
                 for dev in usb_dev:
-                    vid = hex(dev.vendor_id)[2:].rjust(4, "0")
+                    vid = self.fill_zero(hex(dev.vendor_id)[2:])
                     pid = self.fill_zero(hex(dev.product_id)[2:])
                     dev_info = "VID:{0} PID:{1}".format(vid, pid)
                     self.temp_pyusb.append(dev_info)
@@ -75,6 +75,7 @@ class MainUSBToolUI(HID_TestUI.HIDTestUI):
                 _pid = self.fill_zero(hex(self.pid)[2:])
                 dev_info = "VID:{0} PID:{1}".format(_vid, _pid)
                 if dev_info not in self.temp_pyusb:
+                    logging.info("{0} not in {1}, Toggle".format(dev_info, self.temp_pyusb))
                     self.Toggle()
                     self.vid = None
                     self.pid = None
