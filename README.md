@@ -2,6 +2,10 @@ USB调试工具
 ================================================================
 用python2.7、Tkinter、pywinusb(pyusb-linux)模块开发的USB调试工具<br>
 
+
+以**jakey.chen**的开源项目 [USB-HID-TEST](https://gitee.com/jakey.chen/USB-HID-TEST) 为基础修改，工具描述：[USB 调试工具（python2.7 + Tkinter + pyusb/pywinusb）](http://www.cnblogs.com/jakeyChen/p/4463530.html)
+
+
 已将串口工具和USB整合在一起
 * [SlaveDebugTool](https://git.oschina.net/jakey.chen/SlaveDebugTool)
 
